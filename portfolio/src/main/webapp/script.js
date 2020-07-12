@@ -12,23 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 /**
- * uses arrow functions to shorten the above code
+ * Fetches the current state of the game and builds the UI.
  */
-function getGreetingUsingArrowFunctions() {
-  fetch('/data').then(response => response.text()).then((test) => {
-    const testListElement = document.getElementById('greeting-container');
-    testListElement.innerHTML = '';
-    
-    data = eval("(" + test + ")");
-    console.log(data);
-    testListElement.appendChild(
-        createListElement(data[0].author));
-    testListElement.appendChild(
-        createListElement(data[1].author));
-    testListElement.appendChild(
-        createListElement(data[2].author));
+function getSubtractionGame() {
+  fetch('/subtraction-game').then(response => response.json()).then((game) => {
+    const totalEl = document.getElementById('total');
+    if (game.gameOver) {
+      // The current game is over, show the total for the next game.
+      totalEl.innerText = 'Total: 21';
+    } else {
+      totalEl.innerText = 'Total: ' + game.currentTotal;
+    }
+
+    // Build the list of history entries.
+    const historyEl = document.getElementById('history');
+    game.history.forEach((line) => {
+      historyEl.appendChild(createListElement(line));
+    });
   });
 }
 

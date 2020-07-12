@@ -24,15 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/data")
+@WebServlet("/submit-comment")
 public class DataServlet extends HttpServlet {
 
-  public class Test {
+  public class Comment {
     private String title;
     private String author;
     private String content;
-    public Test(){}
-    public Test(String title, String author, String content){
+    public Comment(){}
+    public Comment(String title, String author, String content){
         this.title = title;
         this.author = author;
         this.content = content;
@@ -40,14 +40,17 @@ public class DataServlet extends HttpServlet {
   }
 
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ArrayList test = new ArrayList<>();
-    test.add(new Test("first", "alice", "hi"));
-    test.add(new Test("second", "bob", "hello"));
-    test.add(new Test("third", "cathy", "hey"));
-    Gson gson = new Gson();
-    String json = gson.toJson(test);
-    response.setContentType("application/json;");
-    response.getWriter().println(json);
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String content = getContent(request);
+    response.setContentType("text/html;");
+    response.getWriter().println(content);
+    response.sendRedirect("/index.html");
+  }
+
+  /** Returns the comment entered */
+  private String getContent(HttpServletRequest request) {
+    // Get the input from the form.
+    String content = request.getParameter("comment");
+    return content;
   }
 }
