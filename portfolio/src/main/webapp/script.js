@@ -12,17 +12,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+
 /**
- * Adds a random greeting to the page.
+ * Fetches data from the server and adds it to the DOM.
  */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
+function getGreeting() {
+  console.log('Fetching greeting.');
+  const responsePromise = fetch('/data');
+  responsePromise.then(handleResponse);
+}
 
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
+/**
+ * Handles response by converting it to text and passing the result to
+ * addGreetingToDom().
+ */
+function handleResponse(response) {
+  console.log('Handling the response.');
+  const textPromise = response.text();
+  textPromise.then(addGreetingToDom);
+}
 
-  // Add it to the page.
+/** Adds greeting to the DOM. */
+function addGreetingToDom(greeting) {
+  console.log('Adding greeting to dom: ' + greeting);
+
   const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+  greetingContainer.innerHTML = greeting;
+}
+
+/**
+ * uses arrow functions to shorten the above code
+ */
+function getGreetingUsingArrowFunctions() {
+  fetch('/data').then(response => response.text()).then((greeting) => {
+    document.getElementById('greeting-container').innerHTML = greeting;
+  });
+}
+
+/**
+ * uses the async and await keywords to shorten the above code
+ */
+async function getGreetingUsingAsyncAwait() {
+  const response = await fetch('/data');
+  const greeting = await response.text();
+  document.getElementById('greeting-container').innerHTML = greeting;
 }
