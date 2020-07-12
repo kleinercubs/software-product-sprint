@@ -14,46 +14,27 @@
 
 
 /**
- * Fetches data from the server and adds it to the DOM.
- */
-function getGreeting() {
-  console.log('Fetching greeting.');
-  const responsePromise = fetch('/data');
-  responsePromise.then(handleResponse);
-}
-
-/**
- * Handles response by converting it to text and passing the result to
- * addGreetingToDom().
- */
-function handleResponse(response) {
-  console.log('Handling the response.');
-  const textPromise = response.text();
-  textPromise.then(addGreetingToDom);
-}
-
-/** Adds greeting to the DOM. */
-function addGreetingToDom(greeting) {
-  console.log('Adding greeting to dom: ' + greeting);
-
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerHTML = greeting;
-}
-
-/**
  * uses arrow functions to shorten the above code
  */
 function getGreetingUsingArrowFunctions() {
-  fetch('/data').then(response => response.text()).then((greeting) => {
-    document.getElementById('greeting-container').innerHTML = greeting;
+  fetch('/data').then(response => response.text()).then((test) => {
+    const testListElement = document.getElementById('greeting-container');
+    testListElement.innerHTML = '';
+    
+    data = eval("(" + test + ")");
+    console.log(data);
+    testListElement.appendChild(
+        createListElement(data[0].author));
+    testListElement.appendChild(
+        createListElement(data[1].author));
+    testListElement.appendChild(
+        createListElement(data[2].author));
   });
 }
 
-/**
- * uses the async and await keywords to shorten the above code
- */
-async function getGreetingUsingAsyncAwait() {
-  const response = await fetch('/data');
-  const greeting = await response.text();
-  document.getElementById('greeting-container').innerHTML = greeting;
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
 }
