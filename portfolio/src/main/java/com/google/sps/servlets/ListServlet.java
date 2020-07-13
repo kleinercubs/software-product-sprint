@@ -21,6 +21,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import com.google.sps.data.Comment;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,29 +34,20 @@ import java.util.List;
 @WebServlet("/list-comments")
 public class ListServlet extends HttpServlet {
 
-  public class Comment {
-    private String content;
-    private long timestamp;
-    public Comment(){}
-    public Comment(String content, long timestamp){
-        this.content = content;
-        this.timestamp = timestamp;
-    }
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
+    Query query = new Query("Comments").addSort("timestamp", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     List<Comment> comments = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
+      String author = (String) entity.getProperty("author");
       String content = (String) entity.getProperty("content");
       long timestamp = (long) entity.getProperty("timestamp");
 
-      Comment comment = new Comment(content, timestamp);
+      Comment comment = new Comment(author, content, timestamp);
       comments.add(comment);
     }
 

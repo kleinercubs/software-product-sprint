@@ -7,7 +7,7 @@
     <script src="script.js"></script>
   </head>
   <body onload="loadComments()">
-    <div id="content">
+    <div id="self-introduction">
       <center><h1>Weichen's Portfolio</h1></center>
       <center><p>[github] <a href="https://github.com/kleinercubs">https://github.com/kleinercubs</a>  [email] <a href="polar0228@gmail.com">polar0228@gmail.com</a></p></center>
       <br/>
@@ -18,14 +18,6 @@
       <p>2018.9 - current</p>
       <p>Bachelor of Computer Science</p>
       <br/>
-      <h2>Awards</h2>
-      <p>CCPC2019, Xiamen Silver Oct 2019</p>
-      <p>Nowcoder Girl 2019 Winner(Final Rank:42/1000+) 2019.10</p>
-      <p>35th National Olympiad in Informatics, China Third Prize Jul 2017</p>
-      <p>23th National Olympiad in Informatics in Province, Shanghai, China First Prize Dec 2017</p>
-      <p>22th National Olympiad in Informatics in Province, Shanghai, China First Prize Dec 2016</p>
-      <p>21th National Olympiad in Informatics in Province, Shanghai, China First Prize Dec 2015</p>
-      <br/>
       <h2>Experience</h2>
       <h3>[Introduction to Computer Systems], [y86-64 simulator] Personal Project 2019.12</h3>
       <ul>
@@ -35,13 +27,15 @@
       <ul>
         <li>Used System Verilog to realize a single cpu and a pipeline cpu and reduced the cpi by 64%(from 1.7 to 1.1) by modifying the basic data path</li>
       </ul>
-      <form action="/submit-comment" method="POST">
-        <p>Comment:</p>
-        <input type="text" name="content">
-        <br/><br/>
-        <input type="submit" />
-      </form>
-      <ul id="comment-list"></ul>
     </div>
+    <form action="/submit-comment" method="POST">
+      <p>Comment:</p>
+      author: <input type="text" name="author">
+      <br/>
+      content: <input type="text" name="content">
+      <br/><br/>
+      <input type="submit" />
+    </form>
+    <ul id="comment-list"></ul>
   </body>
 </html>
