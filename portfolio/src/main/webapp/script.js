@@ -29,3 +29,23 @@ function createCommentElement(text) {
   liElement.innerText = text;
   return liElement;
 }
+
+function getLoginStatus(){
+  fetch('/user-auth').then(response => response.json()).then((user) => {
+    const CommentBox = document.getElementById('comment-box');
+    console.log(user);
+    console.log(user.status + " " + user.url);
+    if (user.status == "LoggedIn"){
+      CommentBox.innerHTML = "<form action=\"/submit-comment\" method=\"POST\">"
+                          + "author: <input type=\"text\" name=\"author\">"
+                          + "<br/>"
+                          + "content: <input type=\"text\" name=\"content\">"
+                          + "<br/><br/>"
+                          + "<input type=\"submit\" />"
+                          + "<a href =\"" + user.url +"\"> Logout </a>"
+                          + "</form>";
+    } else {
+      CommentBox.innerHTML = "<a href =\"" + user.url +"\"> Login to leave a comment </a>";
+    }
+  })
+}

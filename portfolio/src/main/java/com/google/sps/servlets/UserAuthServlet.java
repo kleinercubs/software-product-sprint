@@ -32,17 +32,15 @@ public class UserAuthServlet extends HttpServlet {
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
       String userEmail = userService.getCurrentUser().getEmail();
-      String urlToRedirectToAfterUserLogsOut = "/user-auth";
+      String urlToRedirectToAfterUserLogsOut = "/";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
 
-      response.getWriter().println("<p>Hello " + userEmail + "!</p>");
-      response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
-      response.getWriter().println("<p>Return to Home <a href=\"\\index.html\">here</a>.</p>");
+      response.getWriter().println("{\"status\": \"LoggedIn\", \"url\": \"" + logoutUrl + "\"}");
     } else {
-      String urlToRedirectToAfterUserLogsIn = "/user-auth";
+      String urlToRedirectToAfterUserLogsIn = "/";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
 
-      response.sendRedirect(loginUrl);
+      response.getWriter().println("{\"status\": \"LoggedOut\", \"url\": \"" + loginUrl + "\"}");
     }
   }
 }
