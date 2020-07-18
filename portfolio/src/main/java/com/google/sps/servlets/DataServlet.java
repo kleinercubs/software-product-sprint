@@ -37,7 +37,7 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     
     UserService userService = UserServiceFactory.getUserService();
-    
+
     String author = request.getParameter("author");
     String content = request.getParameter("content");
     String email = userService.getCurrentUser().getEmail();
@@ -45,6 +45,7 @@ public class DataServlet extends HttpServlet {
 
     Entity commentEntity = new Entity("Comments");
     commentEntity.setProperty("email", email);
+    if (author.isEmpty()) author = "anonymous";
     commentEntity.setProperty("author", author);
     commentEntity.setProperty("content", content);
     commentEntity.setProperty("timestamp", timestamp);
