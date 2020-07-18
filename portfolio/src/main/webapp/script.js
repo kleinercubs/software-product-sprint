@@ -18,7 +18,7 @@ function loadComments(){
     comments.innerText='';
     comments.forEach((comment) => {
       console.log(comment);
-      commentListElement.appendChild(createCommentElement(comment.content + '\n' + 'by ' + comment.author + '\n' + comment.timestamp));
+      commentListElement.appendChild(createCommentElement(comment.content + '\n' + 'by ' + comment.email + ' ' + comment.author + '\n' + comment.timestamp));
     })
   });
 }
