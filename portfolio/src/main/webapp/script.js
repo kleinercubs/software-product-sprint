@@ -21,6 +21,7 @@ function loadComments(){
     comments.forEach((comment) => {
       author = comment.isAnonymous ? "anonymous" : comment.author;
       console.log(comment);
+      console.log(comment.content + '\n' + 'by ' + comment.email + ' ' + author + '\n' + newDate.toLocaleString('chinese',{hour12:false}));
       newDate.setTime(comment.timestamp);
       commentListElement.appendChild(createCommentElement(comment.content + '\n' + 'by ' + comment.email + ' ' + author + '\n' + newDate.toLocaleString('chinese',{hour12:false})));
     })
@@ -38,17 +39,29 @@ function getLoginStatus(){
   fetch('/user-auth').then(response => response.json()).then((user) => {
     const CommentBox = document.getElementById('comment-box');
     console.log(user);
-    console.log(user.status + " " + user.url);
+    console.log(user.status + " " + user.url + " " + user.nickname);
     if (user.status == "LoggedIn"){
-      CommentBox.innerHTML = "<form action=\"/submit-comment\" method=\"POST\">"
-                          + "author: <input type=\"text\" name=\"author\">"
-                          + "<input type=\"checkBox\" name=\"anonymous\" value=\"true\"> remain anonymous"
-                          + "<br/>"
-                          + "content: <input type=\"text\" name=\"content\" size=\"15\" style=\"width:500px; height:80px;\" required=\"required\">"
-                          + "<br/><br/>"
-                          + "<input type=\"submit\" />"
-                          + "<a href =\"" + user.url +"\"> Logout </a>"
-                          + "</form>";
+      if (user.nickname == "null,NeedInput"){
+        CommentBox.innerHTML = "<form action=\"/submit-comment\" method=\"POST\">"
+                             + "author: <input type=\"text\" name=\"author\" required=\"required\" placeholder=\"set a nickname now!\">"
+                             + "<input type=\"checkBox\" name=\"anonymous\" value=\"true\"> remain anonymous"
+                             + "<br/>"
+                             + "content: <input type=\"text\" name=\"content\" size=\"15\" style=\"width:500px; height:80px;\" required=\"required\">"
+                             + "<br/><br/>"
+                             + "<input type=\"submit\" />"
+                             + "<a href =\"" + user.url +"\"> Logout </a>"
+                             + "</form>";
+      } else {
+        CommentBox.innerHTML = "<form action=\"/submit-comment\" method=\"POST\">"
+                             + "author: <input type=\"text\" name=\"author\" value=\"" + user.nickname + "\" readonly=\"true\">"
+                             + "<input type=\"checkBox\" name=\"anonymous\" value=\"true\"> remain anonymous"
+                             + "<br/>"
+                             + "content: <input type=\"text\" name=\"content\" size=\"15\" style=\"width:500px; height:80px;\" required=\"required\">"
+                             + "<br/><br/>"
+                             + "<input type=\"submit\" />"
+                             + "<a href =\"" + user.url +"\"> Logout </a>"
+                             + "</form>";
+      }
     } else {
       CommentBox.innerHTML = "<a href =\"" + user.url +"\"> Login to leave a comment </a>";
     }

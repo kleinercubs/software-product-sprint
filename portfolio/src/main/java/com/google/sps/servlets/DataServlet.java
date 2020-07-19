@@ -18,6 +18,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Entity;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
@@ -37,13 +39,24 @@ public class DataServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     
     UserService userService = UserServiceFactory.getUserService();
-
-    String author = request.getParameter("author");
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    
     String content = request.getParameter("content");
     String email = userService.getCurrentUser().getEmail();
     String[] chk = request.getParameterValues("anonymous");
     boolean isAnonymous = (chk != null);
     long timestamp = System.currentTimeMillis();
+    
+    String nickname = getUserNickname(userService.getCurrentUser().getEmail());
+    String author = request.getParameter("author");
+    if (nickname == null) {
+      Entity infoEntity = new Entity("UserInfo");
+      infoEntity.setProperty("email", email);
+      infoEntity.setProperty("nickname", author);
+      datastore.put(infoEntity);
+    }
+    
+    System.out.println("dataservlet:" + nickname + " " + author);
 
     Entity commentEntity = new Entity("Comments");
     commentEntity.setProperty("email", email);
@@ -52,9 +65,21 @@ public class DataServlet extends HttpServlet {
     commentEntity.setProperty("content", content);
     commentEntity.setProperty("timestamp", timestamp);
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(commentEntity);
 
     response.sendRedirect("/index.html");
+  }
+
+  private String getUserNickname(String email) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("UserInfo")
+                    .setFilter(new Query.FilterPredicate("email", Query.FilterOperator.EQUAL, email));
+    PreparedQuery results = datastore.prepare(query);
+    Entity entity = results.asSingleEntity();
+    if (entity == null) {
+      return null;
+    }
+    String nickname = (String) entity.getProperty("nickname");
+    return nickname;
   }
 }

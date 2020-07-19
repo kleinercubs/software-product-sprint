@@ -16,6 +16,11 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Entity;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,13 +39,29 @@ public class UserAuthServlet extends HttpServlet {
       String userEmail = userService.getCurrentUser().getEmail();
       String urlToRedirectToAfterUserLogsOut = "/";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-
-      response.getWriter().println("{\"status\": \"LoggedIn\", \"url\": \"" + logoutUrl + "\"}");
+      String nickname = getUserNickname(userService.getCurrentUser().getEmail());
+      if (nickname == null) nickname = "null,NeedInput";
+      System.out.println("sending:" + nickname);
+      System.out.println("{\"status\": \"LoggedIn\", \"url\": \"" + logoutUrl + "\", \"nickname\": \"" + nickname + "\"}");
+      response.getWriter().println("{\"status\": \"LoggedIn\", \"url\": \"" + logoutUrl + "\", \"nickname\": \"" + nickname + "\"}");
     } else {
       String urlToRedirectToAfterUserLogsIn = "/";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
 
-      response.getWriter().println("{\"status\": \"LoggedOut\", \"url\": \"" + loginUrl + "\"}");
+      response.getWriter().println("{\"status\": \"LoggedOut\", \"url\": \"" + loginUrl + "\", \"nickname\": \"null\"}");
     }
+  }
+
+  private String getUserNickname(String email) {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("UserInfo")
+                    .setFilter(new Query.FilterPredicate("email", Query.FilterOperator.EQUAL, email));
+    PreparedQuery results = datastore.prepare(query);
+    Entity entity = results.asSingleEntity();
+    if (entity == null) {
+      return null;
+    }
+    String nickname = (String) entity.getProperty("nickname");
+    return nickname;
   }
 }
