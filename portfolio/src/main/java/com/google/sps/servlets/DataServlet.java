@@ -41,11 +41,13 @@ public class DataServlet extends HttpServlet {
     String author = request.getParameter("author");
     String content = request.getParameter("content");
     String email = userService.getCurrentUser().getEmail();
+    String[] chk = request.getParameterValues("anonymous");
+    boolean isAnonymous = (chk != null);
     long timestamp = System.currentTimeMillis();
 
     Entity commentEntity = new Entity("Comments");
     commentEntity.setProperty("email", email);
-    if (author.isEmpty()) author = "anonymous";
+    commentEntity.setProperty("isAnonymous", isAnonymous);
     commentEntity.setProperty("author", author);
     commentEntity.setProperty("content", content);
     commentEntity.setProperty("timestamp", timestamp);

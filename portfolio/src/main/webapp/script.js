@@ -15,12 +15,14 @@
 function loadComments(){
   fetch('/list-comments').then(response => response.json()).then((comments) => {
     var newDate = new Date();
+    var author = new String();
     const commentListElement = document.getElementById('comment-list');
     comments.innerText='';
     comments.forEach((comment) => {
+      author = comment.isAnonymous ? "anonymous" : comment.author;
       console.log(comment);
       newDate.setTime(comment.timestamp);
-      commentListElement.appendChild(createCommentElement(comment.content + '\n' + 'by ' + comment.email + ' ' + comment.author + '\n' + newDate.toLocaleString('chinese',{hour12:false})));
+      commentListElement.appendChild(createCommentElement(comment.content + '\n' + 'by ' + comment.email + ' ' + author + '\n' + newDate.toLocaleString('chinese',{hour12:false})));
     })
   });
 }
@@ -39,7 +41,8 @@ function getLoginStatus(){
     console.log(user.status + " " + user.url);
     if (user.status == "LoggedIn"){
       CommentBox.innerHTML = "<form action=\"/submit-comment\" method=\"POST\">"
-                          + "author: <input type=\"text\" name=\"author\" placeholder=\"default as anonymous\">"
+                          + "author: <input type=\"text\" name=\"author\">"
+                          + "<input type=\"checkBox\" name=\"anonymous\" value=\"true\"> remain anonymous"
                           + "<br/>"
                           + "content: <input type=\"text\" name=\"content\" size=\"15\" style=\"width:500px; height:80px;\" required=\"required\">"
                           + "<br/><br/>"
