@@ -27,7 +27,6 @@ public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     //throw new UnsupportedOperationException("TODO: Implement this method.");
     int[] busyTime = new int[24 * 60 + 5];
-    int[] pre = new int[24 * 60 + 5];
     long requestDuration = request.getDuration();
     Collection<TimeRange> available = new ArrayList<>(Collections.emptyList());
     for (Event e : events){
