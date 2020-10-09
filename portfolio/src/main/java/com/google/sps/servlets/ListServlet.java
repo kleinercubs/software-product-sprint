@@ -45,9 +45,11 @@ public class ListServlet extends HttpServlet {
     for (Entity entity : results.asIterable()) {
       String author = (String) entity.getProperty("author");
       String content = (String) entity.getProperty("content");
+      String email = (String) entity.getProperty("email");
+      boolean isAnonymous = (boolean) entity.getProperty("isAnonymous");
       long timestamp = (long) entity.getProperty("timestamp");
 
-      Comment comment = new Comment(author, content, timestamp);
+      Comment comment = new Comment(author, content, email, isAnonymous, timestamp);
       comments.add(comment);
     }
 

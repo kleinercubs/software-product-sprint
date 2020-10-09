@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="loadComments()">
+  <body onload="loadComments();getLoginStatus();">
     <div id="self-introduction">
       <center><h1>Weichen's Portfolio</h1></center>
       <center><p>[github] <a href="https://github.com/kleinercubs">https://github.com/kleinercubs</a>  [email] <a href="polar0228@gmail.com">polar0228@gmail.com</a></p></center>
@@ -18,24 +18,11 @@
       <p>2018.9 - current</p>
       <p>Bachelor of Computer Science</p>
       <br/>
-      <h2>Experience</h2>
-      <h3>[Introduction to Computer Systems], [y86-64 simulator] Personal Project 2019.12</h3>
-      <ul>
-        <li>Used C# to create a graphical interface app that allows users to compile *.ys codes, run *.yo codes, monitor the status of the pipeline and debug the code with some basic gdb functions</li>
-      </ul>
-      <h3>[Introduction to Computer Systems], [MIPS] Personal Project 2020.03</h3>
-      <ul>
-        <li>Used System Verilog to realize a single cpu and a pipeline cpu and reduced the cpi by 64%(from 1.7 to 1.1) by modifying the basic data path</li>
-      </ul>
     </div>
-    <form action="/submit-comment" method="POST">
-      <p>Comment:</p>
-      author: <input type="text" name="author">
-      <br/>
-      content: <input type="text" name="content">
-      <br/><br/>
-      <input type="submit" />
-    </form>
-    <ul id="comment-list"></ul>
+    <div id="comment-container">
+      <h2>Comment</h2>
+      <ul id="comment-box"></ul>
+      <ul id="comment-list"></ul>
+    </div>
   </body>
 </html>

@@ -21,53 +21,35 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Entity;
-import com.google.gson.Gson;
-import com.google.sps.data.Comment;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
-@WebServlet("/submit-comment")
-public class DataServlet extends HttpServlet {
+@WebServlet("/user-auth")
+public class UserAuthServlet extends HttpServlet {
 
   @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
+  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType("text/html");
+
     UserService userService = UserServiceFactory.getUserService();
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    
-    String content = request.getParameter("content");
-    String email = userService.getCurrentUser().getEmail();
-    String[] chk = request.getParameterValues("anonymous");
-    boolean isAnonymous = (chk != null);
-    long timestamp = System.currentTimeMillis();
-    
-    String nickname = getUserNickname(userService.getCurrentUser().getEmail());
-    String author = request.getParameter("author");
-    if (nickname == null) {
-      Entity infoEntity = new Entity("UserInfo");
-      infoEntity.setProperty("email", email);
-      infoEntity.setProperty("nickname", author);
-      datastore.put(infoEntity);
+    if (userService.isUserLoggedIn()) {
+      String userEmail = userService.getCurrentUser().getEmail();
+      String urlToRedirectToAfterUserLogsOut = "/";
+      String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+      String nickname = getUserNickname(userService.getCurrentUser().getEmail());
+      if (nickname == null) nickname = "null,NeedInput";
+      System.out.println("sending:" + nickname);
+      System.out.println("{\"status\": \"LoggedIn\", \"url\": \"" + logoutUrl + "\", \"nickname\": \"" + nickname + "\"}");
+      response.getWriter().println("{\"status\": \"LoggedIn\", \"url\": \"" + logoutUrl + "\", \"nickname\": \"" + nickname + "\"}");
+    } else {
+      String urlToRedirectToAfterUserLogsIn = "/";
+      String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
+
+      response.getWriter().println("{\"status\": \"LoggedOut\", \"url\": \"" + loginUrl + "\", \"nickname\": \"null\"}");
     }
-    
-    System.out.println("dataservlet:" + nickname + " " + author);
-
-    Entity commentEntity = new Entity("Comments");
-    commentEntity.setProperty("email", email);
-    commentEntity.setProperty("isAnonymous", isAnonymous);
-    commentEntity.setProperty("author", author);
-    commentEntity.setProperty("content", content);
-    commentEntity.setProperty("timestamp", timestamp);
-
-    datastore.put(commentEntity);
-
-    response.sendRedirect("/index.html");
   }
 
   private String getUserNickname(String email) {
